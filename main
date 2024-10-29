@@ -47,7 +47,6 @@ void mostrarHistorico();
 void adicionarAoHistorico(char nome[50]);
 void processarFilaEspera();
 void adicionarAFilaEspera(char nome [50]);
-void ordenarHospedes();
 
 Reserva *reservas = NULL; // Ponteiro para o início da lista de reservas
 Hospede *hospedes = NULL; // Ponteiro para o início da lista de hóspedes
@@ -141,8 +140,6 @@ void fazerCheckin(char nome[50], Hospede *novoHospede) {
         temp->prox = novo;
         novo->prox = checkinLista;  // O último hóspede aponta para o início
     }
-
-    ordenarHospedes();
     printf("%s fez check-in no quarto %d.\n", nome, quartoReservado);
 }
 
@@ -211,8 +208,6 @@ void removerHospede(Hospede *atual) {
         atual->next->prev = atual->prev;
     }
     free(atual);   
-
-    ordenarHospedes();
 }
 
 void adicionarAoHistorico(char nome[50]) {
@@ -319,7 +314,7 @@ void mostrarFilaEspera() {
     }
 }
 
-// Fun��o de troca para quicksort
+// Função de troca para quicksort
 void swap(char nomes[][50], int quartos[], int i, int j) {
     char tempNome[50];
     strcpy(tempNome, nomes[i]);
@@ -334,11 +329,11 @@ void swap(char nomes[][50], int quartos[], int i, int j) {
 // Particionamento para quicksort
 int particionar(char nomes[][50], int quartos[], int baixo, int alto) {
     char pivo[50];
-    strcpy(pivo, nomes[alto]);  // Piv� � o �ltimo elemento
+    strcpy(pivo, nomes[alto]);  // Pivô é o íltimo elemento
     int i = baixo - 1;
 
     for (int j = baixo; j < alto; j++) {
-        if (strcmp(nomes[j], pivo) < 0) {  // Compara��o alfab�tica
+        if (strcmp(nomes[j], pivo) < 0) {  // Comparação alfabética
             i++;
             swap(nomes, quartos, i, j);
         }
@@ -356,7 +351,7 @@ void quicksort(char nomes[][50], int quartos[], int baixo, int alto) {
     }
 }
 
-// Fun��o para mostrar a lista de h�spedes ordenados alfabeticamente
+// Função para mostrar a lista de hóspedes ordenados alfabeticamente
 void mostrarHospedes() {
     // Conta o número de hóspedes na lista
     int contagem = 0;
@@ -383,47 +378,12 @@ void mostrarHospedes() {
         atual = atual->next;
     }
 
+    quicksort(nomes, quartos, 0, contagem - 1);
+
     // Exibe os dados dos hóspedes
     printf("Lista de Hóspedes:\n");
     for (int i = 0; i < contagem; i++) {
         printf("Hóspede: %s, Quarto: %d\n", nomes[i], quartos[i]);
-    }
-}
-
-void ordenarHospedes() {
-    // Conta o n�mero de h�spedes na lista
-    int contagem = 0;
-    Hospede *atual = hospedes;
-    while (atual != NULL) {
-        contagem++;
-        atual = atual->next;
-    }
-
-    if (contagem == 0) {
-        printf("Não há hóspedes registrados.\n");
-        return;
-    }
-
-    // Cria arrays tempor�rios para armazenar nomes e quartos
-    char nomes[contagem][50];
-    int quartos[contagem];
-
-    // Copia os dados da lista para os arrays
-    atual = hospedes;
-    for (int i = 0; i < contagem; i++) {
-        strcpy(nomes[i], atual->nome);
-        quartos[i] = atual->quarto;
-        atual = atual->next;
-    }
-
-    // Ordena os h�spedes usando quicksort
-    quicksort(nomes, quartos, 0, contagem - 1);
-
-    atual = hospedes;
-    for (int i = 0; i < contagem; i++) {
-        strcpy(atual->nome, nomes[i]);
-        atual->quarto = quartos[i];
-        atual = atual->next;
     }
 }
 
